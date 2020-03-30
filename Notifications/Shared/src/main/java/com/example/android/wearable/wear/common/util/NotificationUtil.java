@@ -15,11 +15,13 @@
  */
 package com.example.android.wearable.wear.common.util;
 
+import android.app.ActivityManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.os.Build;
+import android.util.Log;
 
 import com.example.android.wearable.wear.common.mock.MockDatabase;
 
@@ -65,6 +67,17 @@ public class NotificationUtil {
         } else {
             // Returns null for pre-O (26) devices.
             return null;
+        }
+    }
+
+    public static void printIsOnForeground() {
+        ActivityManager.RunningAppProcessInfo myProcess = new ActivityManager.RunningAppProcessInfo();
+        ActivityManager.getMyMemoryState(myProcess);
+        boolean isInBackground = myProcess.importance != ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND;
+        if(isInBackground) {
+            Log.d("isForeground","Your application is in background state");
+        }else{
+            Log.d("isForeground","Your application is in foreground state");
         }
     }
 }

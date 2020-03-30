@@ -79,5 +79,6 @@
             android:name=".handlers.BigPictureSocialIntentService"
             android:exported="false">
         </service>
+        <service android:name=".GeneralService" />
     </application>
 </manifest>

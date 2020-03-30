@@ -16,10 +16,13 @@ limitations under the License.
 package com.example.android.wearable.wear.wearnotifications.handlers;
 
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.os.Bundle;
+import android.widget.TextView;
 
+import com.example.android.wearable.wear.common.util.NotificationUtil;
 import com.example.android.wearable.wear.wearnotifications.MainActivity;
 import com.example.android.wearable.wear.wearnotifications.R;
 
@@ -39,6 +42,8 @@ public class InboxMainActivity extends Activity {
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
         notificationManager.cancel(MainActivity.NOTIFICATION_ID);
+
+        NotificationUtil.printIsOnForeground();
 
         // TODO: Handle and display email from your database
     }

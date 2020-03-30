@@ -15,7 +15,10 @@ limitations under the License.
  */
 package com.example.android.wearable.wear.wearnotifications;
 
+import android.app.ActivityManager;
 import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
@@ -54,6 +57,8 @@ import com.example.android.wearable.wear.wearnotifications.handlers.InboxMainAct
 import com.example.android.wearable.wear.wearnotifications.handlers.MessagingIntentService;
 import com.example.android.wearable.wear.wearnotifications.handlers.MessagingMainActivity;
 
+import static com.example.android.wearable.wear.wearnotifications.GeneralService.CHANNEL_ID;
+
 /**
  * The Activity demonstrates several popular Notification.Style examples along with their best
  * practices (include proper Wear support when you don't have a dedicated Wear app).
@@ -69,17 +74,19 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private static final String BIG_PICTURE_STYLE = "BIG_PICTURE_STYLE";
     private static final String INBOX_STYLE = "INBOX_STYLE";
     private static final String MESSAGING_STYLE = "MESSAGING_STYLE";
+    private static final String SERVICE_STYLE = "SERVICE";
 
     // Collection of notification styles to back ArrayAdapter for Spinner.
     private static final String[] NOTIFICATION_STYLES = {
-            BIG_TEXT_STYLE, BIG_PICTURE_STYLE, INBOX_STYLE, MESSAGING_STYLE
+            BIG_TEXT_STYLE, BIG_PICTURE_STYLE, INBOX_STYLE, MESSAGING_STYLE, SERVICE_STYLE
     };
 
     private static final String[] NOTIFICATION_STYLES_DESCRIPTION = {
             "Demos reminder type app using BIG_TEXT_STYLE",
             "Demos social type app using BIG_PICTURE_STYLE + inline notification response",
             "Demos email type app using INBOX_STYLE",
-            "Demos messaging app using MESSAGING_STYLE + inline notification responses"
+            "Demos messaging app using MESSAGING_STYLE + inline notification responses",
+            "SERVICE"
     };
 
     private NotificationManagerCompat mNotificationManagerCompat;
@@ -172,6 +179,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
             case MESSAGING_STYLE:
                 generateMessagingStyleNotification();
+                break;
+            case SERVICE_STYLE:
+                generateServiceNotification();;
+                startGeneralService();
                 break;
 
             default:
@@ -844,6 +855,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         Notification notification = notificationCompatBuilder.build();
         mNotificationManagerCompat.notify(NOTIFICATION_ID, notification);
+
+
     }
 
     /**
@@ -863,4 +876,30 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         intent.putExtra("app_uid", getApplicationInfo().uid);
         startActivity(intent);
     }
+
+    private void generateServiceNotification() {
+
+        Log.d(TAG, "generateServiceNotification()");
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel serviceChannel = new NotificationChannel(
+                    CHANNEL_ID,
+                    "Example Service Channel",
+                    NotificationManager.IMPORTANCE_DEFAULT
+            );
+
+            NotificationManager manager = getSystemService(NotificationManager.class);
+            manager.createNotificationChannel(serviceChannel);
+        }
+
+        NotificationUtil.printIsOnForeground();
+    }
+
+    public void startGeneralService() {
+
+        Intent serviceIntent = new Intent(this, GeneralService.class);
+
+        ContextCompat.startForegroundService(this, serviceIntent);
+    }
+
 }
