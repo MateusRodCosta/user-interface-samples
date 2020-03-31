@@ -885,7 +885,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             NotificationChannel serviceChannel = new NotificationChannel(
                     CHANNEL_ID,
                     "Example Service Channel",
-                    NotificationManager.IMPORTANCE_DEFAULT
+                    NotificationManager.IMPORTANCE_MIN
             );
 
             NotificationManager manager = getSystemService(NotificationManager.class);

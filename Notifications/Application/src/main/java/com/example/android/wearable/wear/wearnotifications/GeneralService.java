@@ -64,7 +64,16 @@ public class GeneralService extends Service {
                 .setColor(ContextCompat.getColor(getApplicationContext(), com.example.android.wearable.wear.wearnotifications.R.color.colorPrimary))
                 .setSubText("A")
                 .setCategory(Notification.CATEGORY_SERVICE)
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                // According to https://developer.android.com/guide/components/services#Foreground
+                // we should use at least PRIORITY_LOW for foreground services.
+                // It still has the minimized look, which is good
+                // And https://developer.android.com/training/notify-user/channels#importance tells
+                // us how to map importance and priority to each other
+                // Also, Importance is set on the notification channel
+
+                // This page https://developer.android.com/reference/android/app/NotificationManager.html#IMPORTANCE_MIN
+                // has some info on how NotificationManager treats foreground services with min priority
+                .setPriority(NotificationCompat.PRIORITY_MIN)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
 
         Notification notification = notificationCompatBuilder.build();
@@ -83,6 +92,7 @@ public class GeneralService extends Service {
 
         NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(getApplicationContext());
         notificationCompatBuilder.setContentText(foreground ? "Foreground" : "Background");
+        notificationCompatBuilder.setSmallIcon(R.drawable.ic_n_white_48dp);
         //do heavy work on a background thread
         //stopSelf();
         notificationManagerCompat.notify(1, notificationCompatBuilder.build());
