@@ -17,6 +17,9 @@ import com.example.android.wearable.wear.common.util.NotificationUtil;
 import com.example.android.wearable.wear.wearnotifications.common.R;
 import com.example.android.wearable.wear.wearnotifications.handlers.InboxMainActivity;
 
+import java.util.Timer;
+import java.util.concurrent.ExecutionException;
+
 public class GeneralService extends Service {
 
     public static final String CHANNEL_ID = "exampleServiceChannel";
@@ -66,14 +69,23 @@ public class GeneralService extends Service {
 
         Notification notification = notificationCompatBuilder.build();
 
-        NotificationUtil.printIsOnForeground();
 
         startForeground(1, notification);
 
-        NotificationUtil.printIsOnForeground();
+        boolean foreground = false;
+        try {
+            foreground = new ForegroundCheckTask().execute(getApplicationContext()).get();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
+        NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(getApplicationContext());
+        notificationCompatBuilder.setContentText(foreground ? "Foreground" : "Background");
         //do heavy work on a background thread
         //stopSelf();
+        notificationManagerCompat.notify(1, notificationCompatBuilder.build());
 
         return START_NOT_STICKY;
     }
